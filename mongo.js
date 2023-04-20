@@ -29,8 +29,10 @@ if (process.argv.length < 3) {
   });
 } else {
   Person.find({}).then((result) => {
+    console.log("phonebook:");
     result.forEach((person) => {
-      console.log(person);
+      const personString = `${person.name} ${person.number}`;
+      console.log(personString);
     });
     mongoose.connection.close();
   });

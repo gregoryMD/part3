@@ -1,7 +1,10 @@
+require("dotenv").config();
 const express = require("express");
 const morgan = require("morgan");
 const app = express();
 const cors = require("cors");
+
+const Person = require("./models/person");
 
 morgan.token("content", (req, res) => JSON.stringify(req.body));
 
@@ -47,22 +50,9 @@ let persons = [
 ];
 
 app.post("/api/persons", (req, res) => {
-  const newId = Math.floor(Math.random() * 200);
   const body = req.body;
 
-  const person = {
-    id: newId,
-    name: body.name,
-    number: body.number,
-  };
-
-  const exists = persons.some((p) => p.name == person.name);
-
-  if (exists) {
-    res.status(400).json({
-      error: "this name is already in the phonebook",
-    });
-  } else if (!body.name) {
+  if (!body.name) {
     res.status(400).json({
       error: "name must be included",
     });
@@ -71,14 +61,19 @@ app.post("/api/persons", (req, res) => {
       error: "number must be included",
     });
   } else {
-    persons = persons.concat(person);
+    const person = new Person({
+      name: body.name,
+      number: body.number,
+    });
 
-    res.json(person);
+    person.save().then((savedPerson) => {
+      res.json(savedPerson);
+    });
   }
 });
 
 app.get("/api/persons", (req, res) => {
-  res.json(persons);
+  Person.find({}).then((persons) => res.json(persons));
 });
 
 app.get("/info", (req, res) => {
@@ -93,15 +88,7 @@ app.get("/info", (req, res) => {
 });
 
 app.get("/api/persons/:id", (req, res) => {
-  const id = Number(req.params.id);
-
-  const person = persons.find((p) => p.id === id);
-
-  if (!person) {
-    res.status(404).end();
-  } else {
-    res.json(person);
-  }
+  Person.findById(request.params.id).then((person) => response.json(person));
 });
 
 app.delete("/api/persons/:id", (req, res) => {
@@ -111,6 +98,6 @@ app.delete("/api/persons/:id", (req, res) => {
   res.status(204).end();
 });
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT;
 app.listen(PORT);
 console.log(`server running on port ${PORT}`);

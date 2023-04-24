@@ -68,14 +68,14 @@ app.get("/api/persons", (req, res) => {
 });
 
 app.get("/info", (req, res) => {
-  const length = persons.length;
   const current = new Date().toLocaleString("en-US", {
     timeZone: "America/New_York",
   });
-  const message = `Phonebook has info for ${length} people on ${current}`;
-
-  res.send(`<p>${message}</p>`);
-  console.log(message, current);
+  Person.find({}).then((persons) => {
+    res.send(
+      `<p>Phonebook has info for ${persons.length} people on ${current}</p>`
+    );
+  });
 });
 
 app.get("/api/persons/:id", (req, res, next) => {

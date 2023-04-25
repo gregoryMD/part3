@@ -63,6 +63,22 @@ app.post("/api/persons", (req, res) => {
   }
 });
 
+app.put("/api/persons/:id", (req, res) => {
+  const body = req.body;
+  const query = { name: body.name };
+  Person.findOneAndUpdate(query, { number: body.number })
+    .then((person) => {
+      if (person) {
+        res.json(person);
+      } else {
+        res.status(404).end();
+      }
+    })
+    .catch((error) => {
+      next(error);
+    });
+});
+
 app.get("/api/persons", (req, res) => {
   Person.find({}).then((persons) => res.json(persons));
 });

@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 const mongoose = require("mongoose");
 
 mongoose.set("strictQuery", false);
@@ -8,6 +9,7 @@ console.log("conecting to", url);
 
 mongoose
   .connect(url)
+  // eslint-disable-next-line no-unused-vars
   .then((result) => {
     console.log("connected to MongoDB");
   })
@@ -26,9 +28,7 @@ const personSchema = new mongoose.Schema({
     minlength: 8,
     required: true,
     validate: {
-      validator: (v) => {
-        return /^\d{2,3}-\d+/.test(v);
-      },
+      validator: (v) => /^\d{2,3}-\d+/.test(v),
       message: (props) => `${props.value} is not a valid phone number.`,
     },
   },

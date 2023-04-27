@@ -23,6 +23,7 @@ if (process.argv.length < 3) {
   console.log("give password as argument");
   process.exit(1);
 } else if (process.argv.length > 3) {
+  // eslint-disable-next-line no-unused-vars
   person.save().then((result) => {
     console.log("person saved!");
     mongoose.connection.close();

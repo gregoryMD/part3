@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions */
 require("dotenv").config();
 const express = require("express");
 const morgan = require("morgan");
@@ -7,12 +8,14 @@ const cors = require("cors");
 
 const Person = require("./models/person");
 
+// eslint-disable-next-line no-unused-vars
 morgan.token("content", (req, res) => JSON.stringify(req.body));
 
 const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: "unknown endpoint" });
 };
 
+// eslint-disable-next-line consistent-return
 const errorHandler = (error, req, res, next) => {
   console.error(error.message);
   if (error.name === "CastError") {
@@ -120,6 +123,7 @@ app.get("/api/persons/:id", (req, res, next) => {
 
 app.delete("/api/persons/:id", (req, res, next) => {
   Person.findByIdAndRemove(req.params.id)
+    // eslint-disable-next-line no-unused-vars
     .then((result) => {
       res.status(204).end;
     })
@@ -130,6 +134,5 @@ app.use(unknownEndpoint);
 app.use(errorHandler);
 
 const { PORT } = process.env;
-// const PORT = process.env.PORT
 app.listen(PORT);
 console.log(`server running on port ${PORT}`);

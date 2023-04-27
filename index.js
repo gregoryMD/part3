@@ -1,6 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const morgan = require("morgan");
+
 const app = express();
 const cors = require("cors");
 
@@ -14,7 +15,6 @@ const unknownEndpoint = (request, response) => {
 
 const errorHandler = (error, req, res, next) => {
   console.error(error.message);
-
   if (error.name === "CastError") {
     return res.status(400).send({ error: "malformatted id" });
   }
@@ -28,8 +28,8 @@ const errorHandler = (error, req, res, next) => {
 app.use(cors());
 app.use(express.json());
 app.use(
-  morgan(function (tokens, req, res) {
-    return [
+  morgan((tokens, req, res) =>
+    [
       tokens.method(req, res),
       tokens.url(req, res),
       tokens.status(req, res),
@@ -38,13 +38,13 @@ app.use(
       tokens["response-time"](req, res),
       "ms",
       tokens.content(req, res),
-    ].join(" ");
-  })
+    ].join(" ")
+  )
 );
 app.use(express.static("build"));
 
 app.post("/api/persons", (req, res, next) => {
-  const body = req.body;
+  const { body } = req;
 
   if (!body.name) {
     res.status(400).json({
@@ -69,8 +69,8 @@ app.post("/api/persons", (req, res, next) => {
   }
 });
 
-app.put("/api/persons/:id", (req, res) => {
-  const body = req.body;
+app.put("/api/persons/:id", (req, res, next) => {
+  const { body } = req;
   const query = { name: body.name };
   Person.findOneAndUpdate(
     query,
@@ -129,6 +129,7 @@ app.delete("/api/persons/:id", (req, res, next) => {
 app.use(unknownEndpoint);
 app.use(errorHandler);
 
-const PORT = process.env.PORT;
+const { PORT } = process.env;
+// const PORT = process.env.PORT
 app.listen(PORT);
 console.log(`server running on port ${PORT}`);

@@ -30,8 +30,8 @@ if (process.argv.length < 3) {
 } else {
   Person.find({}).then((result) => {
     console.log("phonebook:");
-    result.forEach((person) => {
-      const personString = `${person.name} ${person.number}`;
+    result.forEach((pers) => {
+      const personString = `${pers.name} ${pers.number}`;
       console.log(personString);
     });
     mongoose.connection.close();

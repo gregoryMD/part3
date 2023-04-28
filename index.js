@@ -84,7 +84,9 @@ app.put("/api/persons/:id", (req, res, next) => {
       if (person) {
         res.json(person);
       } else {
-        res.status(404).end();
+        res.status(404).json({
+          error: "this person has already been deleted",
+        });
       }
     })
     .catch((error) => {
